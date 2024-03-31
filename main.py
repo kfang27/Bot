@@ -35,7 +35,6 @@ def check_for_ldplayer(windows_list):
         print("LDPlayer not found")
         return None
     
-        
 ld_handle = check_for_ldplayer(list)
 
 def capture_ldplayer_screenshot(ldplayer_handle):
@@ -48,3 +47,8 @@ def capture_ldplayer_screenshot(ldplayer_handle):
     else:
         print("LDPlayer not found")
         return None
+
+ld = capture_ldplayer_screenshot(ld_handle)
+cv2.imshow("LDPlayer Screenshot", ld)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
