@@ -1,0 +1,36 @@
+3/31 -
+The IsWindowVisible function also counts windows on the taskbar, as visible. 
+The EnumWindows function takes a function as an argument. This function is also known as callback function because it's being passed in as an argument. 
+The window handle (win_handle, in my case) is supposed to be a special identifier/reference used by the operating system to keep track of the window. These handles is said to be represented usually by an integer by the OS. 
+
+The EnumWindows function, in this case, contains two arguments. One is the callback function and the second is supposed to be the list argument required by the callback function since my callback takes two arguments.
+EnumWindows iterates through each window on the computer and will pass the handle of the window to the callback function when it encounters a window. Because callback appends the title to a list, it will append it to the window_titles list provided by the EnumWindows function. 
+
+def is_ascii(s):
+    return all(ord(c) < 128 and c.isprintable() for c in s)
+
+ldplayer_found = any("LDPlayer" in title for title in window_titles)
+
+if ldplayer_found:
+    print("LDPlayer found!")
+
+    # Get the handle of the LDPlayer window
+    ldplayer_window_handle = win32gui.FindWindow(None, "LDPlayer")
+
+    # Get the position and size of the LDPlayer window
+    ldplayer_rect = win32gui.GetWindowRect(ldplayer_window_handle)
+    ldplayer_x, ldplayer_y, ldplayer_width, ldplayer_height = ldplayer_rect
+
+    # Capture a screenshot of the LDPlayer window
+    ldplayer_screenshot = pyautogui.screenshot(region=(ldplayer_x, ldplayer_y, ldplayer_width, ldplayer_height))
+
+    # Convert the screenshot to OpenCV format
+    ldplayer_screenshot_cv = np.array(ldplayer_screenshot)
+
+    # Display the screenshot
+    cv2.imshow("LDPlayer Screenshot", ldplayer_screenshot_cv)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+else:
+    print("LDPlayer not found.")
