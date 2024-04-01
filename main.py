@@ -2,7 +2,10 @@ import cv2
 import pyautogui
 import win32gui
 import numpy as np
+import pytesseract
 from PIL import Image
+
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def callback(win_handle, titles_list):
     if win32gui.IsWindowVisible(win_handle):
@@ -48,7 +51,17 @@ def capture_ldplayer_screenshot(ldplayer_handle):
         print("LDPlayer not found")
         return None
 
+
 ld = capture_ldplayer_screenshot(ld_handle)
-cv2.imshow("LDPlayer Screenshot", ld)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+ld_gray = cv2.cvtColor(ld, cv2.COLOR_BGR2GRAY)
+#cv2.imwrite("ld_gray.png", ld_gray)
+
+
+text = pytesseract.image_to_string(ld)
+
+# Print the recognized text
+print("Recognized Text:")
+print(text)
+#cv2.imshow("LDPlayer Screenshot", ld_gray)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
