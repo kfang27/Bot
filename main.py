@@ -53,8 +53,7 @@ def capture_ldplayer_screenshot(ldplayer_handle):
 
 
 ld = capture_ldplayer_screenshot(ld_handle)
-ld_gray = cv2.cvtColor(ld, cv2.COLOR_BGR2GRAY)
-#cv2.imwrite("ld_gray.png", ld_gray)
+
 
 
 text = pytesseract.image_to_string(ld)
@@ -62,6 +61,6 @@ text = pytesseract.image_to_string(ld)
 # Print the recognized text
 print("Recognized Text:")
 print(text)
-#cv2.imshow("LDPlayer Screenshot", ld_gray)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+cv2.imshow("LDPlayer Screenshot", ld)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

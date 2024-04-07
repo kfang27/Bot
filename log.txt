@@ -9,3 +9,12 @@ EnumWindows iterates through each window on the computer and will pass the handl
 The OpenCV's imshow() function takes two parameters (first being the title, second being the screenshot itself as a NumPy array) and displays the screenshot 
 waitKey() waits for a key to be pressed, will still close the window without the destroyAllWindows() function
 destroyAllWindows() function is used still, just in the case that a OpenCV window remains open after being closed. It also closes ALL OpenCV windows. 
+
+4/7 - 
+Plan: use template images, seek for the patch/area where it lies in screenshot, ask for position of where the match is found, save the positions by assigning them to variables that will be the cards/buttons, assign positions after template images are matched  
+
+if scales aren’t the same, scale the template image  
+
+After getting the positions of everything, I can check each position for a specific string that contains the name of a unit I passed in for the user input 
+
+Receive coordinates for skill buttons, save them (by assigning them to a class or by unit 1, 2, 3), can have user input who is in those unit slots. For swap scenarios, can make more unit slots to hold those units, look for mystic code position and its skills. For NP gauge check, find the position coordinates of the gauge for all three units and just have user tell us which unit's gauge to check for. 
