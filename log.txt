@@ -17,4 +17,11 @@ if scales aren’t the same, scale the template image
 
 After getting the positions of everything, I can check each position for a specific string that contains the name of a unit I passed in for the user input 
 
-Receive coordinates for skill buttons, save them (by assigning them to a class or by unit 1, 2, 3), can have user input who is in those unit slots. For swap scenarios, can make more unit slots to hold those units, look for mystic code position and its skills. For NP gauge check, find the position coordinates of the gauge for all three units and just have user tell us which unit's gauge to check for. 
+Receive coordinates for skill buttons, save them (by assigning them to a class or by unit 1, 2, 3), can have user input who is in those unit slots. For swap scenarios, can make more unit slots to hold those units, look for mystic code position and its skills. 
+For NP gauge check, find the position coordinates of the gauge for all three units and just have user tell us which unit's gauge to check for.
+
+Currently:
+The PyAutoGUI library seems to only interact with the user's cursor. 
+The easiest way for this code to play the game is to just assign it coordinates based on my monitor, and have it click there.
+Might consider/look into a way to create a second cursor that will operate on its own rather than using my cursor. 
+Need to fix template matching
