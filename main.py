@@ -3,6 +3,8 @@ import pyautogui
 import win32gui
 import numpy as np
 import pytesseract
+import os
+import time
 from PIL import Image
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -25,8 +27,6 @@ def get_window_titles():
     
     return window_titles
 
-list = get_window_titles()
-print(list)
 
 def check_for_ldplayer(windows_list):
     if "LDPlayer" in windows_list:
@@ -38,7 +38,6 @@ def check_for_ldplayer(windows_list):
         print("LDPlayer not found")
         return None
     
-ld_handle = check_for_ldplayer(list)
 
 def capture_ldplayer_screenshot(ldplayer_handle):
     if ldplayer_handle:
@@ -51,16 +50,59 @@ def capture_ldplayer_screenshot(ldplayer_handle):
         print("LDPlayer not found")
         return None
 
+def find_template_match(screenshot, template_image, threshold=0.4):
+    matches_dict = {}
+    
+    result = cv2.matchTemplate(screenshot, template_image, cv2.TM_CCOEFF_NORMED)
+    
+    locations = np.where(result >= threshold)
+    matches = list(zip(*locations[::-1]))
+
+    return matches
+
+def click_coordinate(x, y):
+    pyautogui.click(x=x, y=y)
+    
+# Testing 
+list1 = get_window_titles()
+print(list1)
+
+ld_handle = check_for_ldplayer(list1)
 
 ld = capture_ldplayer_screenshot(ld_handle)
 
+template_folder_path = 'templates'
 
 
-text = pytesseract.image_to_string(ld)
+template_image_path = os.path.join(template_folder_path, 'castoria_skill3.png')
+template = cv2.imread(template_image_path, cv2.IMREAD_GRAYSCALE)
 
-# Print the recognized text
-print("Recognized Text:")
-print(text)
-cv2.imshow("LDPlayer Screenshot", ld)
+screen_path = os.path.join(template_folder_path, 'ex.png')
+screen = cv2.imread(screen_path, cv2.IMREAD_GRAYSCALE)
+matches = find_template_match(screen, template)
+#print(matches)
+
+#coordinate_to_click = (1658, 584)
+print(pyautogui.position())
+
+#click_coordinate(*coordinate_to_click)
+
+
+pyautogui.moveTo(1658, 584)
+
+pyautogui.sleep(0.1)
+
+pyautogui.click()
+
+pyautogui.moveTo(100, 100, duration=1)
+time.sleep(2)
+pyautogui.moveTo(200, 200, duration=1)
+
+
+#text = pytesseract.image_to_string(ld)
+
+#print("Recognized Text:")
+#print(text)
+#cv2.imshow("LDPlayer Screenshot", screen)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
