@@ -71,8 +71,9 @@ ld_handle = check_for_ldplayer(list1)
 
 ld = capture_ldplayer_screenshot(ld_handle)
 
-template_folder_path = 'templates'
 
+
+template_folder_path = 'templates'
 
 template_image_path = os.path.join(template_folder_path, 'castoria_skill3.png')
 template = cv2.imread(template_image_path, cv2.IMREAD_GRAYSCALE)

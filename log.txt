@@ -25,3 +25,4 @@ The PyAutoGUI library seems to only interact with the user's cursor.
 The easiest way for this code to play the game is to just assign it coordinates based on my monitor, and have it click there.
 Might consider/look into a way to create a second cursor that will operate on its own rather than using my cursor. 
 Need to fix template matching
+look into pydirectinput library
