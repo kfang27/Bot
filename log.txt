@@ -26,3 +26,17 @@ The easiest way for this code to play the game is to just assign it coordinates 
 Might consider/look into a way to create a second cursor that will operate on its own rather than using my cursor. 
 Need to fix template matching
 look into pydirectinput library
+
+4/8 - 
+* unpacks iterable objects like lists, tuples, sets into separate arguments when calling a function
+
+How to send a click event to a window without it moving user's cursor
+https://stackoverflow.com/questions/59285854/is-there-a-way-to-send-a-click-event-to-a-window-in-the-background-in-python
+
+The s1 image is a screenshot image taken in the same scale as the LDPlayer client and is detected. 67 x 68 pixels
+The 45 x 45 pixels castoria_skill1 image isn't detected. Scaling seems to matter
+
+Reminders:
+ctrl + k + c is multi-line comments
+ctrl + k + u removes multi-line comments
+shift + alt + a adds/removes block comments

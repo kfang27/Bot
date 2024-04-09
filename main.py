@@ -1,10 +1,8 @@
-import cv2
-import pyautogui
-import win32gui
+import cv2, os, time
+import win32gui, pyautogui, pydirectinput, pytesseract
+import win32api, win32con
+import autoit, ait
 import numpy as np
-import pytesseract
-import os
-import time
 from PIL import Image
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -50,7 +48,7 @@ def capture_ldplayer_screenshot(ldplayer_handle):
         print("LDPlayer not found")
         return None
 
-def find_template_match(screenshot, template_image, threshold=0.4):
+def find_template_match(screenshot, template_image, threshold=0.8):
     matches_dict = {}
     
     result = cv2.matchTemplate(screenshot, template_image, cv2.TM_CCOEFF_NORMED)
@@ -63,12 +61,28 @@ def find_template_match(screenshot, template_image, threshold=0.4):
 def click_coordinate(x, y):
     pyautogui.click(x=x, y=y)
     
+def ldplayer_click(ldplayer_handle, x, y):
+# Find the child window of LDPlayer
+    child_window_handle = win32gui.FindWindowEx(ldplayer_handle, None, None, None)
+
+    # Check if the child window handle is valid
+    if child_window_handle:
+        # Calculate the lParam for the mouse click
+        lParam = win32api.MAKELONG(x, y)
+
+        # Send the mouse click messages to the child window
+        win32gui.SendMessage(child_window_handle, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
+        win32gui.SendMessage(child_window_handle, win32con.WM_LBUTTONUP, None, lParam)
+    else:
+        print("Child window of LDPlayer not found.")
+        
+        
 # Testing 
 list1 = get_window_titles()
 print(list1)
 
 ld_handle = check_for_ldplayer(list1)
-
+print("The LDplayer handle is:", ld_handle)
 ld = capture_ldplayer_screenshot(ld_handle)
 
 
@@ -81,29 +95,13 @@ template = cv2.imread(template_image_path, cv2.IMREAD_GRAYSCALE)
 screen_path = os.path.join(template_folder_path, 'ex.png')
 screen = cv2.imread(screen_path, cv2.IMREAD_GRAYSCALE)
 matches = find_template_match(screen, template)
-#print(matches)
+print("The matches are:", matches)
 
-#coordinate_to_click = (1658, 584)
+
 print(pyautogui.position())
+#ldplayer_click(ld_handle, 375, 560)
+ldplayer_click(ld_handle, 344, 553)
 
-#click_coordinate(*coordinate_to_click)
-
-
-pyautogui.moveTo(1658, 584)
-
-pyautogui.sleep(0.1)
-
-pyautogui.click()
-
-pyautogui.moveTo(100, 100, duration=1)
-time.sleep(2)
-pyautogui.moveTo(200, 200, duration=1)
-
-
-#text = pytesseract.image_to_string(ld)
-
-#print("Recognized Text:")
-#print(text)
 #cv2.imshow("LDPlayer Screenshot", screen)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
