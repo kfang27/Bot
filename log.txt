@@ -40,3 +40,6 @@ Reminders:
 ctrl + k + c is multi-line comments
 ctrl + k + u removes multi-line comments
 shift + alt + a adds/removes block comments
+
+4/10 -
+Tried feature based matching. It does not seem to detect the corners of the skill buttons in the screenshot. 
