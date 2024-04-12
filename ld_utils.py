@@ -67,7 +67,7 @@ def find_template_match(screenshot, template_image, threshold=0.8):
     return matches
 
     
-def ldplayer_click(ldplayer_handle, x, y):
+def ldplayer_single_click(ldplayer_handle, x, y):
 # Find the child window of LDPlayer
     child_window_handle = win32gui.FindWindowEx(ldplayer_handle, None, None, None)
 
@@ -82,27 +82,26 @@ def ldplayer_click(ldplayer_handle, x, y):
     else:
         print("Child window of LDPlayer not found.")
         
-def scale_image(image, width=None, height=None, scale=None):
-    # If both width and height are specified, resize the image to the specified dimensions
-    if width is not None and height is not None:
-        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
-    # If only one of width or height is specified, calculate the aspect ratio and resize accordingly
-    elif width is not None:
-        aspect_ratio = width / float(image.shape[1])
-        height = int(image.shape[0] * aspect_ratio)
-        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
-    elif height is not None:
-        aspect_ratio = height / float(image.shape[0])
-        width = int(image.shape[1] * aspect_ratio)
-        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
-    # If scale factor is specified, resize the image by that factor
-    elif scale is not None:
-        resized_image = cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+def ldplayer_multiclick(ldplayer_handle, coordinates):
+    # Find the child window of LDPlayer
+    child_window_handle = win32gui.FindWindowEx(ldplayer_handle, None, None, None)
+
+    # Check if the child window handle is valid
+    if child_window_handle:
+        # Iterate over the coordinates
+        for x, y in coordinates:
+            # Calculate the lParam for the mouse click
+            lParam = win32api.MAKELONG(x, y)
+
+            # Send the mouse click messages to the child window
+            win32gui.SendMessage(child_window_handle, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)
+            win32gui.SendMessage(child_window_handle, win32con.WM_LBUTTONUP, None, lParam)
+
+            # Sleep for a short duration to prevent consecutive clicks
+            time.sleep(0.1)
     else:
-        # If no resizing parameters are specified, return the original image
-        resized_image = image
-    
-    return resized_image
+        print("Child window of LDPlayer not found.")
+
 
 list1 = get_window_titles()
 print(list1)
@@ -127,11 +126,11 @@ matches = find_template_match(screen, template)
 print(f"The matches for {template_name} are:", matches)
 
 
-ldplayer_click(ld_handle, 207, 553)
+ldplayer_single_click(ld_handle, 207, 553)
 time.sleep(1)
-ldplayer_click(ld_handle, 513, 553)
+ldplayer_single_click(ld_handle, 513, 553)
 time.sleep(1)
-ldplayer_click(ld_handle, 649, 553)
+ldplayer_single_click(ld_handle, 649, 553)
 #matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
 

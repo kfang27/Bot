@@ -104,3 +104,5 @@ def detect_and_match_sift(template, screenshot):
     matched_image = cv2.drawMatches(template, kp1, screenshot, kp2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
     return matched_image
+
+    
