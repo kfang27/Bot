@@ -58,6 +58,9 @@ Charisma Icon: [(37, 553), (343, 553), (344, 553)]
 NP Charge Icon: [(121, 553), (122, 553), (428, 553), (819, 553)]
 Arts Up Icon: [(207, 552), (513, 552), (514, 552), (649, 552), (650, 552)]
 
+4/12 - 
+New idea: try scaling the screenshot by 2x to see if feature based registration can find the corners of the skills 
+
 # Feature based registration
 def detect_corners(image):
     # Convert the image to grayscale
@@ -105,4 +108,3 @@ def detect_and_match_sift(template, screenshot):
 
     return matched_image
 
-    
