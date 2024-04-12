@@ -48,8 +48,16 @@ def capture_ldplayer_screenshot(ldplayer_handle):
         print("LDPlayer not found")
         return None
 
+def convert_to_gray(image):
+    if len(image.shape) > 2:
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        return image
+
+    return gray_image
+    
 def find_template_match(screenshot, template_image, threshold=0.8):
-    matches_dict = {}
+    #matches_dict = {}
     
     result = cv2.matchTemplate(screenshot, template_image, cv2.TM_CCOEFF_NORMED)
     
@@ -74,50 +82,61 @@ def ldplayer_click(ldplayer_handle, x, y):
     else:
         print("Child window of LDPlayer not found.")
         
-
-
-def detect_corners(image):
-    # Convert the image to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def scale_image(image, width=None, height=None, scale=None):
+    # If both width and height are specified, resize the image to the specified dimensions
+    if width is not None and height is not None:
+        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+    # If only one of width or height is specified, calculate the aspect ratio and resize accordingly
+    elif width is not None:
+        aspect_ratio = width / float(image.shape[1])
+        height = int(image.shape[0] * aspect_ratio)
+        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+    elif height is not None:
+        aspect_ratio = height / float(image.shape[0])
+        width = int(image.shape[1] * aspect_ratio)
+        resized_image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+    # If scale factor is specified, resize the image by that factor
+    elif scale is not None:
+        resized_image = cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+    else:
+        # If no resizing parameters are specified, return the original image
+        resized_image = image
     
-    # Detect corners using Shi-Tomasi corner detection
-    corners = cv2.goodFeaturesToTrack(gray, maxCorners=100, qualityLevel=0.01, minDistance=10)
+    return resized_image
 
-    # Convert corners to integers
-    corners = np.int0(corners)
+list1 = get_window_titles()
+print(list1)
 
-    # Draw circles around detected corners
-    for corner in corners:
-        x, y = corner.ravel()
-        cv2.circle(image, (x, y), 3, (0, 0, 255), -1)
+ld_handle = check_for_ldplayer(list1)
+print("The LDplayer handle is:", ld_handle)
+ld = capture_ldplayer_screenshot(ld_handle)
+ld_gray = convert_to_gray(ld)
 
-    return image
+template_folder_path = 'templates'
+template_image_path = os.path.join(template_folder_path, 's3.png')
+template = cv2.imread(template_image_path, cv2.IMREAD_GRAYSCALE)
+#new_template = scale_image(template, scale=20)
+template_name = os.path.splitext(os.path.basename(template_image_path))[0]
 
-def detect_and_match_sift(template, screenshot):
-    # Convert images to grayscale
-    template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-    screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGR2GRAY)
-    
-    # Initialize SIFT detector
-    sift = cv2.SIFT_create()
 
-    # Detect and compute key points and descriptors
-    kp1, des1 = sift.detectAndCompute(template_gray, None)
-    kp2, des2 = sift.detectAndCompute(screenshot_gray, None)
+screen_path = os.path.join(template_folder_path, 'ex.png')
+screen = cv2.imread(screen_path, cv2.IMREAD_GRAYSCALE)
 
-    # Initialize a FLANN-based matcher
-    flann = cv2.FlannBasedMatcher()
+#print(ld)
+matches = find_template_match(screen, template)
+print(f"The matches for {template_name} are:", matches)
 
-    # Match descriptors
-    matches = flann.knnMatch(des1, des2, k=2)
 
-    # Filter matches using ratio test
-    good_matches = []
-    for m, n in matches:
-        if m.distance < 0.7 * n.distance:
-            good_matches.append(m)
+ldplayer_click(ld_handle, 207, 553)
+time.sleep(1)
+ldplayer_click(ld_handle, 513, 553)
+time.sleep(1)
+ldplayer_click(ld_handle, 649, 553)
+#matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
-    # Draw matches
-    matched_image = cv2.drawMatches(template, kp1, screenshot, kp2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
-    return matched_image
+print("This is my cursor's position:", pyautogui.position())
+
+cv2.imshow("LDPlayer Screenshot", screen)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
