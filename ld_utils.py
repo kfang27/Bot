@@ -102,7 +102,20 @@ def ldplayer_multiclick(ldplayer_handle, coordinates):
     else:
         print("Child window of LDPlayer not found.")
 
+def filter_coordinates_list(coordinates_list):
+    # New list is initialized with the first coordinate of given list
+    filtered_list = [coordinates_list[0]]
+    for i in range(1, len(coordinates_list)):
+        # Check if the x-coordinate difference between the current coordinate and the previous one is not 1
+        if coordinates_list[i][0] - filtered_list[-1][0] != 1:
+            filtered_list.append(coordinates_list[i])
 
+    return filtered_list
+    
+    
+    
+    
+    
 list1 = get_window_titles()
 print(list1)
 
@@ -112,19 +125,20 @@ ld = capture_ldplayer_screenshot(ld_handle)
 ld_gray = convert_to_gray(ld)
 
 template_folder_path = 'templates'
-template_image_path = os.path.join(template_folder_path, 's3.png')
+template_image_path = os.path.join(template_folder_path, 's2.png')
 template = cv2.imread(template_image_path, cv2.IMREAD_GRAYSCALE)
 #new_template = scale_image(template, scale=20)
 template_name = os.path.splitext(os.path.basename(template_image_path))[0]
 
 
-screen_path = os.path.join(template_folder_path, 'ex.png')
+screen_path = os.path.join(template_folder_path, 'ldplayer_screenshot.png')
 screen = cv2.imread(screen_path, cv2.IMREAD_GRAYSCALE)
 
 #print(ld)
 matches = find_template_match(screen, template)
+filtered_matches = filter_coordinates_list(matches)
 print(f"The matches for {template_name} are:", matches)
-
+print(f"The filtered matches for {template_name} are:", filtered_matches)
 
 ldplayer_single_click(ld_handle, 207, 553)
 time.sleep(1)
@@ -136,6 +150,6 @@ ldplayer_single_click(ld_handle, 649, 553)
 
 print("This is my cursor's position:", pyautogui.position())
 
-cv2.imshow("LDPlayer Screenshot", screen)
+#cv2.imshow("LDPlayer Screenshot", screen)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
