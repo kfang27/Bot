@@ -120,8 +120,57 @@ def create_unit_and_skills_dict(screenshot):
         print("No unit names provided.")
         return units_skills_dict
     
+    unit_instance_count_dict = {}
+    for name in unit_names:
+        if name not in unit_instance_count_dict:
+            unit_instance_count_dict[name] = 0
+        
+        # increments after initialized and if it already exists
+        unit_instance_count_dict[name] += 1
     
     
+    skill_template_folder = 'skill_templates'
+    skill_template_files_list = os.listdir(skill_template_folder)
+    
+    for filename in skill_template_files_list:
+        if "_s" in filename:
+            # splits name_s# into name and #.png
+            unit_name, skill_number = filename.split('_s')
+            
+            # splits into # and file extension (like png, jpg...), then only uses #
+            skill_number = int(skill_number.split('.')[0])
+
+            if (unit_name in unit_names) and (unit_name in unit_instance_count_dict):
+                template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
+                coordinates_list = find_template_match(screenshot, template_image)
+                filtered_list = filter_coordinates_list(coordinates_list)
+                
+                instance_count = unit_instance_count_dict[unit_name]
+                instance_number = 1
+                if instance_count > 1:
+                    if filtered_list:
+                        for coord in filtered_list:
+                            unit_key = f"{unit_name}_{instance_number}_Skill{skill_number}"
+                            instance_number += 1
+                            units_skills_dict[unit_key] = coord
+            
+        else:
+            skill_name = filename.split('.')[0]
+        
+        
+        if (unit_name in unit_name) and (unit_name in unit_instance_count_dict):
+            
+
+            unit_key = f"{unit_name}_{instance_count}_Skill{skill_number}"
+            
+            template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
+            coordinates_list = find_template_match(screenshot, template_image)
+            filtered_list = filter_coordinates_list(coordinates_list)
+
+            if filtered_list:
+                for coord in filtered_list:
+                    
+            
 list1 = get_window_titles()
 print(list1)
 
@@ -146,11 +195,11 @@ filtered_matches = filter_coordinates_list(matches)
 print(f"The matches for {template_name} are:", matches)
 print(f"The filtered matches for {template_name} are:", filtered_matches)
 
-ldplayer_single_click(ld_handle, 207, 553)
-time.sleep(1)
-ldplayer_single_click(ld_handle, 513, 553)
-time.sleep(1)
-ldplayer_single_click(ld_handle, 649, 553)
+# ldplayer_single_click(ld_handle, 207, 553)
+# time.sleep(1)
+# ldplayer_single_click(ld_handle, 513, 553)
+# time.sleep(1)
+# ldplayer_single_click(ld_handle, 649, 553)
 #matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
 
