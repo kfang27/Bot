@@ -66,7 +66,16 @@ def find_template_match(screenshot, template_image, threshold=0.8):
 
     return matches
 
-    
+def filter_coordinates_list(coordinates_list):
+    # New list is initialized with the first coordinate of given list
+    filtered_list = [coordinates_list[0]]
+    for i in range(1, len(coordinates_list)):
+        # Check if the x-coordinate difference between the current coordinate and the previous one is not 1
+        if coordinates_list[i][0] - filtered_list[-1][0] != 1:
+            filtered_list.append(coordinates_list[i])
+
+    return filtered_list
+
 def ldplayer_single_click(ldplayer_handle, x, y):
 # Find the child window of LDPlayer
     child_window_handle = win32gui.FindWindowEx(ldplayer_handle, None, None, None)
@@ -102,17 +111,14 @@ def ldplayer_multiclick(ldplayer_handle, coordinates):
     else:
         print("Child window of LDPlayer not found.")
 
-def filter_coordinates_list(coordinates_list):
-    # New list is initialized with the first coordinate of given list
-    filtered_list = [coordinates_list[0]]
-    for i in range(1, len(coordinates_list)):
-        # Check if the x-coordinate difference between the current coordinate and the previous one is not 1
-        if coordinates_list[i][0] - filtered_list[-1][0] != 1:
-            filtered_list.append(coordinates_list[i])
-
-    return filtered_list
     
+def create_unit_and_skills_dict(screenshot):
+    units_skills_dict = {}
+    unit_names = input("Enter the names of your units in order (separated by commas): ").split(',')
     
+    if not unit_names:
+        print("No unit names provided.")
+        return units_skills_dict
     
     
     
