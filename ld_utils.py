@@ -156,19 +156,9 @@ def create_unit_and_skills_dict(screenshot):
             
         else:
             skill_name = filename.split('.')[0]
+            
         
         
-        if (unit_name in unit_name) and (unit_name in unit_instance_count_dict):
-            
-
-            unit_key = f"{unit_name}_{instance_count}_Skill{skill_number}"
-            
-            template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
-            coordinates_list = find_template_match(screenshot, template_image)
-            filtered_list = filter_coordinates_list(coordinates_list)
-
-            if filtered_list:
-                for coord in filtered_list:
                     
             
 list1 = get_window_titles()
