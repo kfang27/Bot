@@ -61,6 +61,9 @@ Arts Up Icon: [(207, 552), (513, 552), (514, 552), (649, 552), (650, 552)]
 4/12 - 
 New idea: try scaling the screenshot by 2x to see if feature based registration can find the corners of the skills 
 
+4/15 - 
+Create a case where resolution of emulator is constant and another case where it isn't so we have to find everything
+
 # Feature based registration
 def detect_corners(image):
     # Convert the image to grayscale
