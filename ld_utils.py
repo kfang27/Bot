@@ -3,6 +3,7 @@ import win32gui, pyautogui, pydirectinput, pytesseract
 import win32api, win32con
 import autoit, ait
 import numpy as np
+import pickle
 from PIL import Image
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -116,8 +117,7 @@ def create_unit_and_skills_dict(screenshot):
     units_skills_dict = {}
     units_skills_dict_copy = {}
     unit_names = input("Enter the names of your units in order (separated by commas): ").split(',')
-    #unit_names_mapping = {name.lower(): name for name in unit_names}
-    lower_units_names = {name.lower(): name for name in unit_names}
+    
     if not unit_names:
         print("No unit names provided.")
         return units_skills_dict
@@ -140,11 +140,6 @@ def create_unit_and_skills_dict(screenshot):
     units_names_list = []
     for name in units_skills_dict_copy:
         units_names_list.append(name)
-    print("These are your units:", units_names_list)
-    unit_names_mapping = {}
-    for name in units_skills_dict_copy:
-        lower_name = name.lower()
-        unit_names_mapping[lower_name] = name
     
     skill_template_folder = 'skill_templates'
     skill_template_files_list = os.listdir(skill_template_folder)
@@ -157,7 +152,7 @@ def create_unit_and_skills_dict(screenshot):
             # splits into # and file extension (like png, jpg...), then only uses #
             skill_number = int(skill_number.split('.')[0])
 
-            if (file_unit_name in lower_units_names):
+            if (file_unit_name.capitalize() in unit_names):
                 template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
                 coordinates_list = find_template_match(screenshot, template_image)
                 filtered_list = filter_coordinates_list(coordinates_list)
@@ -186,7 +181,7 @@ def create_unit_and_skills_dict(screenshot):
             if filtered_list:
                 for unit_name, coord in zip(units_names_list, filtered_list):
                     skill_number = input(f"Enter the skill number of {skill_name} for {unit_name}: ")
-                    unit_key = f"{unit_names_mapping[unit_name.lower()]}'s Skill{skill_number}"
+                    unit_key = f"{unit_name}'s Skill{skill_number}"
                     units_skills_dict[unit_key] = coord
                 
     return units_skills_dict
@@ -201,6 +196,17 @@ def organize_skills_dict(original_dict):
         organized_dict[unit_name][skill_number] = value
     return organized_dict
 
+def write_dict_to_file(dictionary, file_path):
+    with open(file_path, 'w') as file:
+        file.write("{\n")
+        for key, value in dictionary.items():
+            file.write(f'    "{key}": {{\n')
+            for inner_key, inner_value in value.items():
+                file.write(f'        "{inner_key}": {list(inner_value)},\n')
+            file.write("    },\n")
+        file.write("}\n")
+
+            
 list1 = get_window_titles()
 print(list1)
 
@@ -225,10 +231,17 @@ filtered_matches = filter_coordinates_list(matches)
 print(f"The matches for {template_name} are:", matches)
 print(f"The filtered matches for {template_name} are:", filtered_matches)
 #print(create_unit_and_skills_dict(screen))
+data = {
+    'Castoria 1': {'Skill3': (210, 558), 'Skill1': (40, 559), 'Skill2': (124, 559)},
+    'Castoria 2': {'Skill3': (516, 558), 'Skill1': (346, 559), 'Skill2': (431, 559)},
+    'Kama': {'Skill1': (652, 558), 'Skill2': (737, 561), 'Skill3': (822, 559)}
+}
+#skills_dict = create_unit_and_skills_dict(screen)
+#organized = organize_skills_dict(skills_dict)
 
-skills_dict = create_unit_and_skills_dict(screen)
-organized = organize_skills_dict(skills_dict)
-print(organized)
+#print(organized)
+
+write_dict_to_file(data, "skills.txt")
 
 # ldplayer_single_click(ld_handle, 207, 553)
 # time.sleep(1)
