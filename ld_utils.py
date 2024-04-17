@@ -114,8 +114,10 @@ def ldplayer_multiclick(ldplayer_handle, coordinates):
     
 def create_unit_and_skills_dict(screenshot):
     units_skills_dict = {}
+    units_skills_dict_copy = {}
     unit_names = input("Enter the names of your units in order (separated by commas): ").split(',')
-    
+    #unit_names_mapping = {name.lower(): name for name in unit_names}
+    lower_units_names = {name.lower(): name for name in unit_names}
     if not unit_names:
         print("No unit names provided.")
         return units_skills_dict
@@ -128,6 +130,21 @@ def create_unit_and_skills_dict(screenshot):
         # increments after initialized and if it already exists
         unit_instance_count_dict[name] += 1
     
+    for instance_name, count in unit_instance_count_dict.items():
+        if count > 1:
+            for i in range(1, count + 1):
+                units_skills_dict_copy[f"{instance_name} {i}"] = {}
+        else:
+            units_skills_dict_copy[f"{instance_name}"] = {}
+    
+    units_names_list = []
+    for name in units_skills_dict_copy:
+        units_names_list.append(name)
+    print("These are your units:", units_names_list)
+    unit_names_mapping = {}
+    for name in units_skills_dict_copy:
+        lower_name = name.lower()
+        unit_names_mapping[lower_name] = name
     
     skill_template_folder = 'skill_templates'
     skill_template_files_list = os.listdir(skill_template_folder)
@@ -135,39 +152,62 @@ def create_unit_and_skills_dict(screenshot):
     for filename in skill_template_files_list:
         if "_s" in filename:
             # splits name_s# into name and #.png
-            unit_name, skill_number = filename.split('_s')
+            file_unit_name, skill_number = filename.split('_s')
             
             # splits into # and file extension (like png, jpg...), then only uses #
             skill_number = int(skill_number.split('.')[0])
 
-            if (unit_name in unit_names) and (unit_name in unit_instance_count_dict):
+            if (file_unit_name in lower_units_names):
                 template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
                 coordinates_list = find_template_match(screenshot, template_image)
                 filtered_list = filter_coordinates_list(coordinates_list)
                 
-                instance_count = unit_instance_count_dict[unit_name]
+                instance_count = unit_instance_count_dict[file_unit_name.capitalize()]
                 instance_number = 1
                 if instance_count > 1:
                     if filtered_list:
                         for coord in filtered_list:
-                            unit_key = f"{unit_name}_{instance_number}_Skill{skill_number}"
+                            unit_key = f"{file_unit_name.capitalize()} {instance_number}'s Skill{skill_number}"
                             instance_number += 1
+                            units_skills_dict[unit_key] = coord
+                else:
+                    if filtered_list:
+                        for coord in filtered_list:
+                            unit_key = f"{file_unit_name.capitalize()}'s Skill{skill_number}"
                             units_skills_dict[unit_key] = coord
             
         else:
             skill_name = filename.split('.')[0]
             
-        
-        
-                    
+            template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
+            coordinates_list = find_template_match(screenshot, template_image)
+            filtered_list = filter_coordinates_list(coordinates_list)
             
+            if filtered_list:
+                for unit_name, coord in zip(units_names_list, filtered_list):
+                    skill_number = input(f"Enter the skill number of {skill_name} for {unit_name}: ")
+                    unit_key = f"{unit_names_mapping[unit_name.lower()]}'s Skill{skill_number}"
+                    units_skills_dict[unit_key] = coord
+                
+    return units_skills_dict
+        
+def organize_skills_dict(original_dict):
+    organized_dict = {}
+    for key, value in original_dict.items():
+        unit_name, skill = key.split("'s Skill")
+        skill_number = f"Skill{skill}"
+        if unit_name not in organized_dict:
+            organized_dict[unit_name] = {}
+        organized_dict[unit_name][skill_number] = value
+    return organized_dict
+
 list1 = get_window_titles()
 print(list1)
 
 ld_handle = check_for_ldplayer(list1)
 print("The LDplayer handle is:", ld_handle)
 ld = capture_ldplayer_screenshot(ld_handle)
-ld_gray = convert_to_gray(ld)
+#ld_gray = convert_to_gray(ld)
 
 template_folder_path = 'templates'
 template_image_path = os.path.join(template_folder_path, 's2.png')
@@ -184,6 +224,11 @@ matches = find_template_match(screen, template)
 filtered_matches = filter_coordinates_list(matches)
 print(f"The matches for {template_name} are:", matches)
 print(f"The filtered matches for {template_name} are:", filtered_matches)
+#print(create_unit_and_skills_dict(screen))
+
+skills_dict = create_unit_and_skills_dict(screen)
+organized = organize_skills_dict(skills_dict)
+print(organized)
 
 # ldplayer_single_click(ld_handle, 207, 553)
 # time.sleep(1)
