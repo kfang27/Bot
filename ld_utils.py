@@ -231,17 +231,13 @@ filtered_matches = filter_coordinates_list(matches)
 print(f"The matches for {template_name} are:", matches)
 print(f"The filtered matches for {template_name} are:", filtered_matches)
 #print(create_unit_and_skills_dict(screen))
-data = {
-    'Castoria 1': {'Skill3': (210, 558), 'Skill1': (40, 559), 'Skill2': (124, 559)},
-    'Castoria 2': {'Skill3': (516, 558), 'Skill1': (346, 559), 'Skill2': (431, 559)},
-    'Kama': {'Skill1': (652, 558), 'Skill2': (737, 561), 'Skill3': (822, 559)}
-}
-#skills_dict = create_unit_and_skills_dict(screen)
-#organized = organize_skills_dict(skills_dict)
 
-#print(organized)
+skills_dict = create_unit_and_skills_dict(screen)
+organized = organize_skills_dict(skills_dict)
 
-write_dict_to_file(data, "skills.txt")
+print(organized)
+
+write_dict_to_file(organized, "skill_coords.txt")
 
 # ldplayer_single_click(ld_handle, 207, 553)
 # time.sleep(1)
