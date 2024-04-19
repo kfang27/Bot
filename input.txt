@@ -1,0 +1,4 @@
+Enter the names of your servants on the next line:
+castoria, castoria, kama 
+
+For each of your servants, write the order number 

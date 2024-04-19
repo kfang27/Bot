@@ -115,31 +115,29 @@ def ldplayer_multiclick(ldplayer_handle, coordinates):
     
 def create_unit_and_skills_dict(screenshot):
     units_skills_dict = {}
-    units_skills_dict_copy = {}
-    unit_names = input("Enter the names of your units in order (separated by commas): ").split(',')
+    unit_names_input = input("Enter the names of your units in order: ").strip().lower()
     
-    if not unit_names:
+    if not unit_names_input:
         print("No unit names provided.")
         return units_skills_dict
     
-    unit_instance_count_dict = {}
-    for name in unit_names:
-        if name not in unit_instance_count_dict:
-            unit_instance_count_dict[name] = 0
         
-        # increments after initialized and if it already exists
-        unit_instance_count_dict[name] += 1
-    
-    for instance_name, count in unit_instance_count_dict.items():
-        if count > 1:
-            for i in range(1, count + 1):
-                units_skills_dict_copy[f"{instance_name} {i}"] = {}
-        else:
-            units_skills_dict_copy[f"{instance_name}"] = {}
-    
-    units_names_list = []
-    for name in units_skills_dict_copy:
-        units_names_list.append(name)
+    unit_names = []
+    unit_instance_count = {}
+    for name in unit_names_input.split(','):
+        stripped_name = name.strip()
+        # checks if it's an empty string now because the strip() before, removes any trailing whitespace, including strings such as ' '
+        if stripped_name:
+            split_result = stripped_name.split()
+            for i in split_result:
+                if i.capitalize() in unit_instance_count:
+                    unit_instance_count[i.capitalize()] += 1
+                    unit_names.append(f"{i.capitalize()} {unit_instance_count[i.capitalize()]}")
+                else:
+                    unit_instance_count[i.capitalize()] = 1
+                    unit_names.append(i.capitalize())
+    print(unit_names)
+    print(unit_instance_count)
     
     skill_template_folder = 'skill_templates'
     skill_template_files_list = os.listdir(skill_template_folder)
@@ -152,18 +150,22 @@ def create_unit_and_skills_dict(screenshot):
             # splits into # and file extension (like png, jpg...), then only uses #
             skill_number = int(skill_number.split('.')[0])
 
-            if (file_unit_name.capitalize() in unit_names):
+            if (file_unit_name.capitalize() in unit_instance_count):
                 template_image = cv2.imread(os.path.join(skill_template_folder, filename), cv2.IMREAD_GRAYSCALE)
                 coordinates_list = find_template_match(screenshot, template_image)
                 filtered_list = filter_coordinates_list(coordinates_list)
                 
-                instance_count = unit_instance_count_dict[file_unit_name.capitalize()]
-                instance_number = 1
+                instance_count = unit_instance_count[file_unit_name.capitalize()]
+                
                 if instance_count > 1:
                     if filtered_list:
-                        for coord in filtered_list:
-                            unit_key = f"{file_unit_name.capitalize()} {instance_number}'s Skill{skill_number}"
-                            instance_number += 1
+                        name_list = []
+                        for name in unit_names:
+                            if file_unit_name.capitalize() in name.split()[0]:
+                                name_list.append(name)
+                                
+                        for index,coord in zip(name_list, filtered_list):
+                            unit_key = f"{index}'s Skill{skill_number}"
                             units_skills_dict[unit_key] = coord
                 else:
                     if filtered_list:
@@ -179,8 +181,17 @@ def create_unit_and_skills_dict(screenshot):
             filtered_list = filter_coordinates_list(coordinates_list)
             
             if filtered_list:
-                for unit_name, coord in zip(units_names_list, filtered_list):
-                    skill_number = input(f"Enter the skill number of {skill_name} for {unit_name}: ")
+                for unit_name, coord in zip(unit_names, filtered_list):
+                    while True:
+                        skill_number = input(f"Enter the skill number of {skill_name} for {unit_name}: ")
+                        if skill_number.isdigit():
+                            skill_number = int(skill_number)
+                            if 1 <= skill_number <= 3:
+                                break
+                            else:
+                                print("Skill number must be between 1 and 3.")
+                        else:
+                            print("Please enter a valid number.")
                     unit_key = f"{unit_name}'s Skill{skill_number}"
                     units_skills_dict[unit_key] = coord
                 
@@ -212,7 +223,7 @@ print(list1)
 
 ld_handle = check_for_ldplayer(list1)
 print("The LDplayer handle is:", ld_handle)
-ld = capture_ldplayer_screenshot(ld_handle)
+# ld = capture_ldplayer_screenshot(ld_handle)
 #ld_gray = convert_to_gray(ld)
 
 template_folder_path = 'templates'
@@ -237,7 +248,7 @@ organized = organize_skills_dict(skills_dict)
 
 print(organized)
 
-write_dict_to_file(organized, "skill_coords.txt")
+#write_dict_to_file(organized, "skill_coords.txt")
 
 # ldplayer_single_click(ld_handle, 207, 553)
 # time.sleep(1)
@@ -250,5 +261,5 @@ write_dict_to_file(organized, "skill_coords.txt")
 print("This is my cursor's position:", pyautogui.position())
 
 #cv2.imshow("LDPlayer Screenshot", screen)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
