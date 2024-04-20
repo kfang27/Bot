@@ -68,6 +68,14 @@ Create a case where resolution of emulator is constant and another case where it
 4/18 -
 To allow user input in the output of VSCode, do Control + , and look for code runner run in terminal and check it on
 
+4/19 -
+Need to check for which units to target for skills 
+Detect cards (mainly for NP)
+Tap screen to speed up and skip, or wait till loaded
+Implement mystic code detect and swap
+Tap and repeat
+
+
 # Feature based registration
 def detect_corners(image):
     # Convert the image to grayscale
