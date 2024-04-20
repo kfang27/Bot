@@ -1,4 +1,10 @@
-Enter the names of your servants on the next line:
+Enter the names of your servants, in order, on the next line:
 castoria, castoria, kama 
 
-For each of your servants, write the order number 
+For each of your servants, write the order number for where they have the universal skill icon as:
+For example, if all three servants have the blue ArtsUp icon 
+(the first two servants have it as their third skill and the third servant has it as their first):
+castoria: 3
+castoria: 3
+kama: 1
+
