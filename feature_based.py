@@ -5,8 +5,7 @@ def detect_corners(image):
     # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    # Detect corners using Shi-Tomasi corner detection
-    corners = cv2.goodFeaturesToTrack(gray, maxCorners=1000000, qualityLevel=0.01, minDistance=10)
+    corners = cv2.goodFeaturesToTrack(gray, maxCorners=100, qualityLevel=0.01, minDistance=10)
 
     # Convert corners to integers
     corners = np.int0(corners)
@@ -53,12 +52,19 @@ print(list1)
 ld_handle = check_for_ldplayer(list1)
 print("The LDplayer handle is:", ld_handle)
 ld = capture_ldplayer_screenshot(ld_handle)
+ld_file = 'screenshot2.png'
+
 
 template_folder_path = 'templates'
-template_image_path = os.path.join(template_folder_path, 's3.png')
+template_image_path = os.path.join(template_folder_path, 'target.png')
 template = cv2.imread(template_image_path, cv2.IMREAD_COLOR)
-screen_path = os.path.join(template_folder_path, 'ldplayer_screenshot.png')
+screen_path = os.path.join(template_folder_path, 'screenshot2.png')
 screen = cv2.imread(screen_path, cv2.IMREAD_COLOR)
+
+#saving to templates folder
+# ld_path = os.path.join(template_folder_path, 'screenshot2.png')
+# cv2.imwrite(ld_path, cv2.cvtColor(ld, cv2.COLOR_RGB2BGR))
+
 
 # Test Execution
 template_corners = detect_corners(template)
