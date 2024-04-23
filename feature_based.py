@@ -61,7 +61,7 @@ def detect_and_match_sift(template, screenshot):
     #     matched_image = cv2.drawMatches(template, kp1, screenshot, kp2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
     # else:
     #     print("No good matches found.")
-    print("Matched Coordinates:", matched_coordinates)
+    # print("Matched Coordinates:", matched_coordinates)
     
     return matched_image, matched_coordinates
 
@@ -96,7 +96,7 @@ screen_gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
 
 # Initialize ORB detector
 matched_image, matched_coords = detect_and_match_sift(template, screen)
-
+print(matched_coords)
 # Draw the top matches
 #matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
