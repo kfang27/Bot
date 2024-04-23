@@ -8,7 +8,7 @@ def detect_corners(image):
     corners = cv2.goodFeaturesToTrack(gray, maxCorners=100, qualityLevel=0.01, minDistance=10)
 
     # Convert corners to integers
-    corners = np.int0(corners)
+    corners = np.intp(corners)
 
     # Draw circles around detected corners
     for corner in corners:
@@ -43,8 +43,27 @@ def detect_and_match_sift(template, screenshot):
 
     # Draw matches
     matched_image = cv2.drawMatches(template, kp1, screenshot, kp2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+    matched_coordinates = []
+    for match in good_matches:
+        matched_coordinates.append(kp2[match.trainIdx].pt)
+    # print("Number of good matches:", len(good_matches))
 
-    return matched_image
+    # # Print number of keypoints
+    # print("Number of keypoints in template:", len(kp1))
+    # print("Number of keypoints in screenshot:", len(kp2))
+
+    # # Check dimensions of template and screenshot
+    # print("Template shape:", template.shape)
+    # print("Screenshot shape:", screenshot.shape)
+
+    # # Check if good_matches is not empty
+    # if len(good_matches) > 0:
+    #     matched_image = cv2.drawMatches(template, kp1, screenshot, kp2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+    # else:
+    #     print("No good matches found.")
+    print("Matched Coordinates:", matched_coordinates)
+    
+    return matched_image, matched_coordinates
 
 list1 = get_window_titles()
 print(list1)
@@ -76,7 +95,7 @@ template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 screen_gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
 
 # Initialize ORB detector
-matched_image = detect_and_match_sift(template, screen)
+matched_image, matched_coords = detect_and_match_sift(template, screen)
 
 # Draw the top matches
 #matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
