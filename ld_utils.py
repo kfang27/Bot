@@ -243,10 +243,10 @@ print(f"The matches for {template_name} are:", matches)
 print(f"The filtered matches for {template_name} are:", filtered_matches)
 #print(create_unit_and_skills_dict(screen))
 
-skills_dict = create_unit_and_skills_dict(screen)
-organized = organize_skills_dict(skills_dict)
+# skills_dict = create_unit_and_skills_dict(screen)
+# organized = organize_skills_dict(skills_dict)
 
-print(organized)
+# print(organized)
 
 #write_dict_to_file(organized, "skill_coords.txt")
 
@@ -255,7 +255,6 @@ print(organized)
 # ldplayer_single_click(ld_handle, 513, 553)
 # time.sleep(1)
 # ldplayer_single_click(ld_handle, 649, 553)
-#matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
 
 print("This is my cursor's position:", pyautogui.position())
