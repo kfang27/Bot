@@ -74,3 +74,7 @@ Detect cards (mainly for NP)
 Tap screen to speed up and skip, or wait till loaded
 Implement mystic code detect and swap
 Tap and repeat
+
+4/23 -
+Using feature based for skill targeting
+Need to figure out how to pick which coordinate to click on 

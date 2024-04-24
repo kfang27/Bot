@@ -83,8 +83,11 @@ def ldplayer_single_click(ldplayer_handle, x, y):
 
     # Check if the child window handle is valid
     if child_window_handle:
+        x_int = int(x)
+        y_int = int(y)
+
         # Calculate the lParam for the mouse click
-        lParam = win32api.MAKELONG(x, y)
+        lParam = win32api.MAKELONG(x_int, y_int)
 
         # Send the mouse click messages to the child window
         win32gui.SendMessage(child_window_handle, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, lParam)

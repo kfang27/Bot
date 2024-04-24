@@ -97,13 +97,45 @@ screen_gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
 # Initialize ORB detector
 matched_image, matched_coords = detect_and_match_sift(template, screen)
 print(matched_coords)
-# Draw the top matches
-#matched_image = cv2.drawMatches(template, kp1, screen, kp2, matches[:10], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+matched_points_image = screen.copy()
+
+# Sort the coordinates by their y-coordinate to arrange them vertically
+matched_coords.sort(key=lambda coord: coord[1])
+
+# Define initial text position
+text_x = 20
+text_y = 20
+
+# Spacing between each coordinate label
+label_spacing = 20
+
+for x, y in matched_coords:
+    # Draw a circle around the matched point
+    cv2.circle(matched_points_image, (int(x), int(y)), 5, (0, 0, 255), -1)
+    
+    # Define the position for writing the coordinates (a few pixels to the right of the circle)
+    text_position = (text_x + 2000, text_y)  # Adjust the offset as needed
+    
+    # Draw a line from the circle to the text position
+    cv2.line(matched_points_image, (int(x), int(y)), text_position, (0, 255, 0), 1)
+    
+    # Write coordinates on the image
+    cv2.putText(matched_points_image, f"• ({int(x)}, {int(y)})", text_position, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+    
+    # Increment the y-coordinate for the next text position
+    text_y += label_spacing  # Adjust the spacing as needed
+
+# Display the matched points image
+cv2.imshow('Matched Points', matched_points_image)
+# match_path = os.path.join(template_folder_path, 'match.png')
+# cv2.imwrite(match_path, cv2.cvtColor(matched_image, cv2.COLOR_RGB2BGR))
+
+ldplayer_single_click(ld_handle, 960.8262329101562, 365.5218200683594)
 
 # Display the matched image
-cv2.imshow('Feature Matching Result', matched_image)
+#cv2.imshow('Feature Matching Result', matched_image)
 
-# Cleanup
+
 print("This is my cursor's position:", pyautogui.position())
 cv2.waitKey(0)
 cv2.destroyAllWindows()
