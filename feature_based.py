@@ -109,6 +109,13 @@ text_y = 20
 # Spacing between each coordinate label
 label_spacing = 20
 
+# Calculate the height of the coordinate list
+list_height = len(matched_coords) * label_spacing
+
+# Adjust the text position if it exceeds the image height
+if text_y + list_height > matched_points_image.shape[0]:
+    text_y = matched_points_image.shape[0] - list_height
+
 for x, y in matched_coords:
     # Draw a circle around the matched point
     cv2.circle(matched_points_image, (int(x), int(y)), 5, (0, 0, 255), -1)
