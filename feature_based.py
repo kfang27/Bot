@@ -65,13 +65,61 @@ def detect_and_match_sift(template, screenshot):
     
     return matched_image, matched_coordinates
 
+def match_lines(template_lines, target_lines):
+    matched_lines = []
+
+    for line1 in template_lines:
+        min_distance = float('inf')
+        matched_line = None
+
+        for line2 in target_lines:
+            # Compute some similarity metric between lines (e.g., distance between lines)
+            distance = compute_distance(line1, line2)
+
+            # Check if the distance is smaller than the minimum distance so far
+            if distance < min_distance:
+                min_distance = distance
+                matched_line = line2
+
+        # Check if a match was found
+        if matched_line is not None:
+            matched_lines.append((line1, matched_line))
+    
+    print("Number of matched lines:", len(matched_lines))
+    print("Matched lines:", matched_lines)
+
+    return matched_lines
+
+def compute_distance(line1, line2):
+    if len(line1) < 4 or len(line2) < 4:
+        return float('inf')  # Return a large value if either line doesn't have enough values
+    
+    x1_1, y1_1, x1_2, y1_2 = line1
+    x2_1, y2_1, x2_2, y2_2 = line2
+
+    # Compute the distance between the midpoints of the lines
+    mid_x1 = (x1_1 + x1_2) / 2
+    mid_y1 = (y1_1 + y1_2) / 2
+    mid_x2 = (x2_1 + x2_2) / 2
+    mid_y2 = (y2_1 + y2_2) / 2
+
+    distance = np.sqrt((mid_x1 - mid_x2)**2 + (mid_y1 - mid_y2)**2)
+
+    return distance
+
+def detect_lines(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+    lines = cv2.HoughLines(edges, 1, np.pi / 180, 100)
+    return lines
+
+
 list1 = get_window_titles()
 print(list1)
 
 ld_handle = check_for_ldplayer(list1)
 print("The LDplayer handle is:", ld_handle)
 ld = capture_ldplayer_screenshot(ld_handle)
-ld_file = 'screenshot2.png'
 
 
 template_folder_path = 'templates'
@@ -81,9 +129,26 @@ screen_path = os.path.join(template_folder_path, 'screenshot2.png')
 screen = cv2.imread(screen_path, cv2.IMREAD_COLOR)
 
 #saving to templates folder
-# ld_path = os.path.join(template_folder_path, 'screenshot2.png')
+# ld_path = os.path.join(template_folder_path, 'attack_screen.png')
 # cv2.imwrite(ld_path, cv2.cvtColor(ld, cv2.COLOR_RGB2BGR))
 
+screenpath2 = os.path.join(template_folder_path, 'ldplayer_screenshot.png')
+screen2 = cv2.imread(screenpath2, cv2.IMREAD_COLOR)
+attack_path = os.path.join(template_folder_path, 'attack_button.png')
+attack_template = cv2.imread(attack_path, cv2.IMREAD_COLOR)
+attack_image, attack_coords = detect_and_match_sift(attack_template, screen2)
+#cv2.imshow('Attack Points', attack_image)
+#print("The attack button is located at: ", attack_coords)
+#ldplayer_single_click(ld_handle, 1018.885498046875, 615.6768798828125)
+
+# Attack Phase for NP CARD
+screenpath3 = os.path.join(template_folder_path, 'attack_screen.png')
+attack_screen = cv2.imread(screenpath3, cv2.IMREAD_COLOR)
+np_path = os.path.join(template_folder_path, 'npcard.png')
+np_card = cv2.imread(np_path, cv2.IMREAD_COLOR)
+np_match_image, np_coords = detect_and_match_sift(np_card, attack_screen)
+cv2.imshow('NP_Match', np_match_image)
+print("The NP card was found at: ", np_coords)
 
 # Test Execution
 template_corners = detect_corners(template)
@@ -96,7 +161,7 @@ screen_gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
 
 # Initialize ORB detector
 matched_image, matched_coords = detect_and_match_sift(template, screen)
-print(matched_coords)
+#print(matched_coords)
 matched_points_image = screen.copy()
 
 # Sort the coordinates by their y-coordinate to arrange them vertically
@@ -133,11 +198,12 @@ for x, y in matched_coords:
     text_y += label_spacing  # Adjust the spacing as needed
 
 # Display the matched points image
-cv2.imshow('Matched Points', matched_points_image)
+#cv2.imshow('Matched Points', matched_points_image)
 # match_path = os.path.join(template_folder_path, 'match.png')
 # cv2.imwrite(match_path, cv2.cvtColor(matched_image, cv2.COLOR_RGB2BGR))
 
-ldplayer_single_click(ld_handle, 960.8262329101562, 365.5218200683594)
+#Target
+#ldplayer_single_click(ld_handle, 960.8262329101562, 365.5218200683594)
 
 # Display the matched image
 #cv2.imshow('Feature Matching Result', matched_image)
